@@ -4,7 +4,7 @@ import { IconButton } from './IconButton'
 import { CloseIcon } from './Icons'
 import styles from './ShortcutsDialog.module.css'
 
-/** The keyboard map in PLAN.md §6.3. "to" and "or" render as words, not key chips. */
+/** The keyboard map in docs/PLAN.md §6.3. "to" and "or" render as words, not key chips. */
 const SEPARATORS = new Set(['to', 'or'])
 
 const SHORTCUTS: { keys: string[]; action: string }[] = [
@@ -17,6 +17,7 @@ const SHORTCUTS: { keys: string[]; action: string }[] = [
   { keys: ['Enter', 'or', '='], action: 'Equals' },
   { keys: ['Backspace'], action: 'Delete, or step back' },
   { keys: ['Esc', 'or', 'Delete'], action: 'Clear (AC)' },
+  { keys: ['↑', '↓', '←', '→'], action: 'Move between keys (Enter presses one)' },
   { keys: ['h'], action: 'Show or hide history' },
   { keys: ['t'], action: 'Switch light / dark theme' },
   { keys: ['?'], action: 'Show this help' },

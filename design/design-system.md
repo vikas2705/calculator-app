@@ -158,6 +158,7 @@ A modal (`role="dialog" aria-modal="true"`) centred over `scrim`, card max 480px
 | Enter or = | Equals |
 | Backspace | Delete last digit |
 | Esc | Clear (AC); closes an open sheet or overlay first |
+| ↑ ↓ ← → | Move focus between keys on the keypad grid |
 | h | Show or hide history |
 | t | Switch light and dark theme |
 | ? | Show this help |
@@ -171,7 +172,7 @@ Keyboard input flashes the matching on-screen key. Ignore shortcuts when Ctrl, C
 - Pressing an operator right after another replaces it.
 - xʸ is a binary operator (`2 ^ 10 = 1,024`).
 - √ applies to the current entry immediately (`√144 = 12`).
-- % turns the current entry into a fraction of 100 (`250 × 18% = 45`).
+- % turns the current entry into a fraction of 100 (`250 × 18% = 45`). A number typed right after it multiplies (`32% 2` reads `32% × 2` = 0.64).
 - ± flips the sign of the current entry.
 - ⌫ removes the last typed character; AC clears everything.
 - Errors (division by zero, √ of a negative, overflow) show the Error state with plain, specific wording, e.g. `Cannot divide by zero.`, `Cannot take the square root of a negative number.`

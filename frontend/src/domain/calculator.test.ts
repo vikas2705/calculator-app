@@ -258,6 +258,45 @@ describe('unary keys', () => {
   })
 })
 
+describe('a number typed right after % multiplies it (as on phones)', () => {
+  it('32 % 2 reads "32% × 2" and = gives 0.64', () => {
+    expect(press(keys('32%2')).display.main).toBe('32% × 2')
+    const { display, records } = press(keys('32%2='))
+    expect(display).toMatchObject({ variant: 'result', main: '0.64', expression: '32% × 2 =' })
+    expect(records).toEqual([{ expression: '32% × 2 =', result: 0.64 }])
+  })
+
+  it('keeps typing into the new number, including a decimal point', () => {
+    expect(press(keys('32%25=')).display).toMatchObject({ main: '8', expression: '32% × 25 =' })
+    expect(press(keys('32%.5=')).display).toMatchObject({ main: '0.16', expression: '32% × 0.5 =' })
+  })
+
+  it('runs left to right after an earlier operator, like a pressed ×', () => {
+    // (12 + 0.32) × 2
+    expect(press(keys('12+32%2=')).display).toMatchObject({ main: '24.64', expression: '12 + 32% × 2 =' })
+  })
+
+  it('works on % of a result', () => {
+    expect(press(keys('5+27=%2=')).display).toMatchObject({ main: '0.64', expression: '32% × 2 =' })
+  })
+
+  it('Backspace takes the number, then the ×, then the %', () => {
+    expect(lines('32%2<<<')).toEqual(['3', '32', '32%', '32% × 2', '32% ×', '32%', '32'])
+  })
+
+  it('does not apply to √: a digit after √9 still starts a new number', () => {
+    expect(press(keys('9r5')).display.main).toBe('5')
+  })
+
+  it('if the running total cannot be reached, keeps "12 + 32%" for a retry', () => {
+    const before = press(keys('12+32%')).state
+    const { state, display } = press(keys('2'), before, 'offline')
+    expect(display).toMatchObject({ variant: 'error', main: 'Cannot reach the calculator service.' })
+    expect({ ...state, connectionLost: false }).toEqual(before)
+    expect(press(keys('2'), state).display.main).toBe('12 + 32% × 2')
+  })
+})
+
 describe('√ and ± before a number wait for it', () => {
   it('right after an operator, √ applies to the next number typed', () => {
     expect(lines('12+r9=')).toEqual(['1', '12', '12 +', '12 + √', '12 + √9', '15'])

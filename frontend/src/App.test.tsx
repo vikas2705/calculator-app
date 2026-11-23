@@ -116,6 +116,16 @@ describe('keyboard-only use', () => {
     expect(within(historyPanel()).getByRole('button', { name: 'Use 15, from 12 + √9 =' })).toBeInTheDocument()
   })
 
+  it('a number typed right after % multiplies it: 32%2 = 0.64', async () => {
+    const { user } = setup()
+    await user.keyboard('32%2')
+    await waitFor(() => expect(main()).toHaveTextContent('32% × 2'))
+    await waitFor(() => expect(hint()).toHaveTextContent('= 0.64'))
+    await user.keyboard('{Enter}')
+    await waitFor(() => expect(main()).toHaveTextContent(/^0\.64$/))
+    expect(expression()).toHaveTextContent('32% × 2 =')
+  })
+
   it('ignores keys held with Ctrl, Cmd or Alt', async () => {
     const { user } = setup()
     await user.keyboard('{Control>}7{/Control}{Meta>}8{/Meta}{Alt>}9{/Alt}')
@@ -154,6 +164,56 @@ describe('Enter and focused buttons', () => {
     await user.tab() // focus on "6"
     await user.keyboard('2+3{Enter}')
     await waitFor(() => expect(main()).toHaveTextContent(/^5$/))
+  })
+})
+
+describe('arrow keys on the keypad', () => {
+  const key = (name: string) => screen.getByRole('button', { name })
+
+  it('move focus around the grid and stop at its edges', async () => {
+    const { user } = setup()
+    key('5').focus()
+    await user.keyboard('{ArrowUp}')
+    expect(key('8')).toHaveFocus()
+    await user.keyboard('{ArrowRight}{ArrowRight}')
+    expect(key('Subtract')).toHaveFocus()
+    await user.keyboard('{ArrowRight}') // right edge
+    expect(key('Subtract')).toHaveFocus()
+    await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}') // − → + → = (two rows tall) → stays
+    expect(key('Equals')).toHaveFocus()
+    await user.keyboard('{ArrowLeft}{ArrowDown}{ArrowLeft}')
+    expect(key('0')).toHaveFocus()
+    expect(main()).toHaveTextContent(/^0$/) // moving presses nothing
+  })
+
+  it('Enter then presses the focused key, once', async () => {
+    const { user } = setup()
+    key('5').focus()
+    await user.keyboard('{ArrowDown}{Enter}')
+    await waitFor(() => expect(main()).toHaveTextContent(/^2$/))
+  })
+
+  it('after a mouse click, Enter presses the key reached with an arrow', async () => {
+    const { user } = setup()
+    await user.click(key('5'))
+    await user.keyboard('{ArrowRight}{Enter}')
+    await waitFor(() => expect(main()).toHaveTextContent(/^56$/))
+  })
+
+  it('after moving and then typing, Enter means equals again', async () => {
+    const { user } = setup()
+    key('5').focus()
+    await user.keyboard('{ArrowUp}2+3{Enter}')
+    await waitFor(() => expect(main()).toHaveTextContent(/^5$/))
+  })
+
+  it('do nothing when focus is outside the keypad, or with Shift held', async () => {
+    const { user } = setup()
+    await user.keyboard('{ArrowDown}')
+    expect(document.body).toHaveFocus()
+    key('5').focus()
+    await user.keyboard('{Shift>}{ArrowUp}{/Shift}')
+    expect(key('5')).toHaveFocus()
   })
 })
 

@@ -6,7 +6,7 @@ rather than silently doing something different.
 
 Source documents:
 - PRD: the problem statement PDF (kept outside the repository); its requirements are copied verbatim in §1.
-- Decisions: agreed with the user in conversation on 2026-11-20 (recorded in §2)
+- Decisions: agreed with the user in conversation (recorded in §2)
 
 ---
 
@@ -38,7 +38,7 @@ to perform arithmetic. Focus on clean design, maintainable code, testable archit
 | D3 | Unit tests **and coverage report** |
 | D4 | Dockerfile to run frontend + backend together |
 | I1 | Prioritise correctness, clarity, maintainability over extra features |
-| I2 | Share all prompts used → `PROMPTS.md` *(the user chose to share the opening prompts: problem, decisions, plan, UI design)* |
+| I2 | Share all prompts used → `PROMPTS.md` *(the prompts used to plan, design, build and improve the project; GitHub setup and small layout tweaks left out)* |
 
 ---
 
@@ -62,16 +62,18 @@ to perform arithmetic. Focus on clean design, maintainable code, testable archit
 | U14 | Clean and maintainable, nothing extra. |
 | U15 | Thorough testing, including hunting for unknown edge cases. |
 | U16 | The 5 earlier recommendations are accepted: simple monorepo + stdlib Go server; single `/calculate` endpoint + `/health`; pure-function state logic; history tape + keyboard + themes + screen-reader announcements; single Docker image where Go serves the UI. |
-| U17 | (2026-11-20, after testing) **Display while typing:** the bright main line shows the whole expression (`12 + 5`); the faded line below shows its running result (`= 17`). After `=`, the result is bright and highlighted, with the finished expression small above it. Replaces the U3 layout where the big line held only the current number. |
-| U18 | (2026-11-20) **Backspace never gets stuck:** it deletes typed digits, then steps back over the operator and the previous number (`12 + 5` → `12 +` → `12` → `1` → `0`). After a result it returns to the expression for editing. On `√9` / `18%` it undoes the √ / % (back to `9`). After an error it goes back to the input that failed (`8 ÷ 0`) so it can be fixed. |
-| U19 | (2026-11-20) **A lone √ or % is finished by `=`** and saved to history (`9 r =` → `√9 = 3`). Nothing is saved before `=`. A plain number alone (typed, recalled or ±) with `=` is still a no-op. |
-| U20 | (2026-11-20) **`t` switches light/dark theme.** `h` also closes the history sheet when it is open. |
-| U22 | (2026-11-20) **History hidden until asked for, on every screen size.** The history button (top-left of the display) and `h` show/hide it. Wide screens: the calculator sits centred alone; opening history slides it left and fades the panel in beside it (non-modal, typing continues, recalling a row keeps it open; closes with the button, `h` or its ×). Narrow screens: bottom sheet, as before. **No page scrolling on laptops/tablets:** key height also follows the window height (never below the 44px touch target). Replaces "history = side panel always visible ≥760px". |
-| U21 | (2026-11-20) **√ pressed before a number waits for it:** `12 +` √ 9 → `12 + √9` (= 15); also at the very start (√ 9 → `√9`). √ after a number still applies to it (`9` √ → `√9`). Replaces "applies to the running total". Same idea for `±` before a number (`12 +` ± 5 → `12 + −5`); `%` before a number does nothing (it belongs after a number). With only `√`/`−` so far, `%`, a second `√`, operators and `=` do nothing. |
+| U17 | (after testing) **Display while typing:** the bright main line shows the whole expression (`12 + 5`); the faded line below shows its running result (`= 17`). After `=`, the result is bright and highlighted, with the finished expression small above it. Replaces the U3 layout where the big line held only the current number. |
+| U18 | **Backspace never gets stuck:** it deletes typed digits, then steps back over the operator and the previous number (`12 + 5` → `12 +` → `12` → `1` → `0`). After a result it returns to the expression for editing. On `√9` / `18%` it undoes the √ / % (back to `9`). After an error it goes back to the input that failed (`8 ÷ 0`) so it can be fixed. |
+| U19 | **A lone √ or % is finished by `=`** and saved to history (`9 r =` → `√9 = 3`). Nothing is saved before `=`. A plain number alone (typed, recalled or ±) with `=` is still a no-op. |
+| U20 | **`t` switches light/dark theme.** `h` also closes the history sheet when it is open. |
+| U22 | **History hidden until asked for, on every screen size.** The history button (top-left of the display) and `h` show/hide it. Wide screens: the calculator sits centred alone; opening history slides it left and fades the panel in beside it (non-modal, typing continues, recalling a row keeps it open; closes with the button, `h` or its ×). Narrow screens: bottom sheet, as before. **No page scrolling on laptops/tablets:** key height also follows the window height (never below the 44px touch target). Replaces "history = side panel always visible ≥760px". |
+| U21 | **√ pressed before a number waits for it:** `12 +` √ 9 → `12 + √9` (= 15); also at the very start (√ 9 → `√9`). √ after a number still applies to it (`9` √ → `√9`). Replaces "applies to the running total". Same idea for `±` before a number (`12 +` ± 5 → `12 + −5`); `%` before a number does nothing (it belongs after a number). With only `√`/`−` so far, `%`, a second `√`, operators and `=` do nothing. |
+| U23 | **Number keys show a clear press,** like the other keys: `key-digit-pressed` is darker than the key in light mode and brighter in dark mode (it was a barely visible opacity drop). **Arrow keys move focus around the keypad** grid (no wrap; a two-cell key is one stop); Tab order is unchanged, and Enter presses a key reached with the arrows. |
+| U24 | **A number typed right after `%` multiplies it,** like phone calculators: `32 % 2` reads `32% × 2` = 0.64 (it used to drop `32%` and start a new number). The × is a real operator press, so it runs left to right (`12 + 32% 2` = `(12 + 0.32) × 2`) and Backspace undoes it. Only `%`: a digit after `√9` still starts a new number. `x% = x ÷ 100` (U4) is unchanged, so `32 + 2%` is still 32.02. |
 
 ---
 
-## 3. Numeric rules (decided; verified with Node on 2026-11-20)
+## 3. Numeric rules (decided; verified with Node)
 
 Both JavaScript `number` and Go `float64` are IEEE-754 doubles, so the limits are identical on both sides.
 
@@ -114,7 +116,7 @@ Browser ──(HTTP, same origin)──▶ Go server :8080
 
 ```
 calculator/
-├─ PLAN.md                         # this file
+├─ docs/PLAN.md                    # this file
 ├─ README.md
 ├─ Dockerfile
 ├─ compose.yaml                    # enables `docker compose up --build`
@@ -286,13 +288,14 @@ responses are discarded.
 | `Enter` or `=` | equals |
 | `Backspace` | delete |
 | `Escape` or `Delete` | clear (AC); Escape closes an open sheet/dialog first |
+| `↑` `↓` `←` `→` | move focus between keypad keys, following the grid (U23) |
 | `h` | show/hide history (U22: side panel beside the calculator on wide screens, sheet on narrow). Works while the sheet is open, to close it. |
 | `t` | switch light/dark theme (U20). Also works while the sheet is open. |
 | `?` | shortcuts dialog |
 
 - Keys pressed with Ctrl, Cmd or Alt are ignored, so browser shortcuts (copy, reload) still work.
 - **Edge case:** pressing Enter on a focused button fires the native click. Rule implemented: if the user reached the button
-  with **Tab**, Enter activates that button (once). After a mouse click, or after typing calculator keys, Enter means `=`.
+  with **Tab** or the **arrow keys**, Enter activates that button (once). After a mouse click, or after typing calculator keys, Enter means `=`.
   (CSS `:focus-visible` could not be used: Chrome turns it on for the focused element as soon as any key is pressed —
   found by the real-browser check, where clicking 7 + 2 then Enter gave 22.)
 - Every button is reachable with Tab, has a visible focus ring, and has an `aria-label` (e.g. "divide", "square root").
@@ -312,10 +315,9 @@ responses are discarded.
 - (U22) Hidden until the history button or `h` opens it. ≥760px: side panel beside the centred calculator. <760px: bottom sheet.
 
 ### 6.6 Visual design — follow the design system for how things LOOK
-**User rule (2026-11-20): the design artifact is for UI only. It never changes behaviour or any decision agreed in this plan. If they conflict, this plan wins.**
+**User rule: the design artifact is for UI only. It never changes behaviour or any decision agreed in this plan. If they conflict, this plan wins.**
 
-**Source of truth:** the user's design system "Calculator – Pastel Morning & Aurora Night"
-(https://claude.ai/artifact/GX9mb14Pw6xmf3TzNX3pKT), copied locally on 2026-11-20 to:
+**Source of truth:** the user's design system "Calculator – Pastel Morning & Aurora Night", copied locally to:
 - `design/design-system.md` — the build spec (layout, components, states, a11y, copy, don'ts)
 - `design/tokens.json` — every colour (light + dark), type style, spacing, radius, shadow, effect
 - `design/components/*.md` — per-component guidelines
@@ -337,7 +339,7 @@ Rules taken from it (non-exhaustive — always re-read `design/design-system.md`
 ## 7. Swagger / OpenAPI
 - Hand-written `openapi.json` (OpenAPI 3) documenting: `/api/v1/calculate` (request/response schemas, the operation enum,
   every error code with an example), and `/health`.
-- Served at `/openapi.json`, browsable at `/docs`. Swagger UI pinned to `swagger-ui-dist@5.34.1` (released 2026-10-30).
+- Served at `/openapi.json`, browsable at `/docs`. Swagger UI pinned to `swagger-ui-dist@5.34.1`.
 - A Go test asserts that the spec's operation enum matches the operations the calculator supports, so docs and code cannot drift apart.
 
 ---
@@ -400,7 +402,7 @@ Rules taken from it (non-exhaustive — always re-read `design/design-system.md`
 
 | Step | Work | Done when |
 |---|---|---|
-| 0 | ~~Go installed~~ ✅ done 2026-11-20: `go1.27.4 darwin/arm64` (Node `v24.18.0`, Docker `28.4.0` already present); scaffold the folders | `go version` works |
+| 0 | ~~Go installed~~ ✅ done: `go1.27.4 darwin/arm64` (Node `v24.18.0`, Docker `28.4.0` already present); scaffold the folders | `go version` works |
 | ✅ 1 | `internal/calculator` + tests | all green |
 | ✅ 2 | `internal/api` handler, errors, routes, health + tests + fuzz | all green |
 | ✅ 3 | OpenAPI spec + `/docs` + spec-drift test | `/docs` renders locally |
@@ -435,7 +437,7 @@ Rules taken from it (non-exhaustive — always re-read `design/design-system.md`
 | N4, D4, U11 | §8, step 10 |
 | C1 / C2 | §6 / §5 |
 | D1, U13 | §4 layout; Git set up by the user |
-| I2 | PROMPTS.md (opening prompts) |
+| I2 | PROMPTS.md (prompts used to plan, design, build and improve the project) |
 | U5, U6 | §6.6, `tokens.css` |
 | U7 | §6.5 |
 | U8 | §6.3 |
@@ -472,24 +474,24 @@ Rules taken from it (non-exhaustive — always re-read `design/design-system.md`
 - **No SPA fallback.** There is only one page, so it is not needed.
 - **405 handling verified:** Go's mux would return a plain-text 405, so `/api/v1/calculate` has an explicit JSON 405 handler (with an `Allow: POST` header).
 
-- **Design system vs plan (resolved by the user, 2026-11-20):** the design artifact is for UI only; every agreed plan decision stands.
+- **Design system vs plan (resolved by the user):** the design artifact is for UI only; every agreed plan decision stands.
   Behaviour that had briefly followed the design was reverted to the plan: 15-digit rounding (kept), shake on refused digits (restored),
   `Delete` = AC (restored), no `t`/`x` shortcuts (removed), `√`/`%` after an operator apply to the running total (restored),
   `=` with no pending operator is a no-op (restored). Pure-UI items kept from the design: tokens, layout, copy, history rows as styled
   buttons. Prototype-only pieces dropped: state switcher, sample history. The intro panel was removed at the user's request.
   With the intro panel gone, the side panel's sticky offset changed from the design's 120px to 90px so it lines up with the calculator
   (verified: both tops at 110px at 820/1024/1440px).
-- **Frontend build deviations (2026-11-20):**
+- **Frontend build deviations:**
   1. `formatNumber` keeps the unrounded value when rounding to 15 digits would overflow (1.7976931348623157e308 rounded up is Infinity) — bug found by unit test.
   2. Dev/test tooling verified at build time: Vite 8.3.8, React 19.3.1, TypeScript 7.0.2, Vitest 5.1.1, jsdom 31.0.1.
-  3. Docker base images pinned (looked up on Docker Hub 2026-11-20): `node:24.18.0-alpine3.24` (= local Node), `golang:1.27.4-alpine3.24` (= local Go), `alpine:3.24.4`.
+  3. Docker base images pinned (looked up on Docker Hub): `node:24.18.0-alpine3.24` (= local Node), `golang:1.27.4-alpine3.24` (= local Go), `alpine:3.24.4`.
 
-- **Bug fixes and changes after user testing (2026-11-20):** U17–U20 added (display shows the whole expression; Backspace steps back; lone √/% finished by `=`; `t` theme shortcut).
+- **Bug fixes and changes after user testing:** U17–U20 added (display shows the whole expression; Backspace steps back; lone √/% finished by `=`; `t` theme shortcut).
   Bug found while reproducing the `h` report: the bottom sheet stayed `visibility: hidden` for the first moment of its slide-in, so
   focus could not move into it (it stayed on the page behind), and `h` could not close it because shortcuts were off while it was open.
   Fixed: visibility switches at once when opening; `h`/`t` stay active while the sheet is open. Verified in real Chrome.
 
-- **Desktop layout (U22, 2026-11-20, user request):** history button shown at every width; the wide stage animates
+- **Desktop layout (U22, user request):** history button shown at every width; the wide stage animates
   `grid-template-columns` from `420px 0px` to `420px 360px` (400/320 from 760px) while the panel fades in, and clips
   sideways (`overflow-x: clip`) so the closed panel cannot widen the page (a 94px sideways overflow at 820px was found and
   fixed this way). Keys: `clamp(44px, min(15vw, (100dvh − 455px) / 6), 72px)`, where 455px is everything on the page
@@ -499,11 +501,11 @@ Rules taken from it (non-exhaustive — always re-read `design/design-system.md`
   on top of `body { min-height: 100vh }` (`display: flow-root` on body). Measured: no vertical or sideways scroll at
   1470×800, 1440×900, 1366×768, 1280×720, 1024×768, 820×1180, 768×1024, 390×844; a 375×667 phone still scrolls 29px
   at the 44px key minimum.
-- **Chained calculations (U21, 2026-11-20):** a `compute` step's answer may lead to another step (`12 + √9 =` → `sqrt(9)`, then `add(12, 3)`), and the hook runs them in order. Errors and Backspace refer to the input as typed (`12 + √9`).
-- **History button on the result highlight (2026-11-20, user request):** the narrow-screen history button sat exactly on the display's corner, so its outline collided with the highlighted result area's border. It now sits 8px inside the corner, and on a result its border is transparent. Verified at 320/393/700px in both themes.
-- **History sheet animation (2026-11-20, user request):** the scrim behind the phone sheet now fades in/out (0.28s) with the sheet's slide instead of appearing at once. Verified in Chrome.
+- **Chained calculations (U21):** a `compute` step's answer may lead to another step (`12 + √9 =` → `sqrt(9)`, then `add(12, 3)`), and the hook runs them in order. Errors and Backspace refer to the input as typed (`12 + √9`).
+- **History button on the result highlight (user request):** the narrow-screen history button sat exactly on the display's corner, so its outline collided with the highlighted result area's border. It now sits 8px inside the corner, and on a result its border is transparent. Verified at 320/393/700px in both themes.
+- **History sheet animation (user request):** the scrim behind the phone sheet now fades in/out (0.28s) with the sheet's slide instead of appearing at once. Verified in Chrome.
 
-- **Step 11–13 (2026-11-20):**
+- **Step 11–13:**
   1. Backend coverage is measured with `-coverpkg=./...`, because plain per-package numbers show `internal/docs` at 0%
      even though the `api` tests exercise it. Result: 91.9% (152 test cases). Frontend: 97.75% statements, 98.47% lines (199 tests); after U22, 97.76% / 98.48% (201 tests).
   2. Gap found by the coverage run: `cmd/server` had no tests. `run` now takes a context and a `getenv` function, so
@@ -516,10 +518,3 @@ Rules taken from it (non-exhaustive — always re-read `design/design-system.md`
   4. The README's local-development steps were run as written (`go run ./cmd/server` + `npm run dev`; Vite on :5173
      proxied `/api` to :8080), and its `curl` outputs are real responses.
   5. README screenshots live in `docs/`.
-
-## 14. Open items
-- All build steps (0–13) are done.
-- **Git (PRD deliverable 1, instructions 3–4):** the user sets up their Git account and config, creates the repository
-  and pushes. Prepared: a root `.gitignore` (dependencies and build output); both coverage reports are committed (user
-  decision), so reviewers can open them without running anything.
-- U21 (√ waits for the next number) was chosen by the user. The `±` and `%` rows came from the proposal they accepted; they confirmed the √ line explicitly.

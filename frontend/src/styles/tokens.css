@@ -46,7 +46,7 @@
   --text-faint: #665D7C;
   --key-digit: rgba(255, 255, 255, .72);
   --key-digit-hover: rgba(255, 255, 255, .95);
-  --key-digit-pressed: rgba(255, 255, 255, .5);
+  --key-digit-pressed: rgba(222, 216, 238, .92);
   --key-digit-text: #2C2440;
   --key-fn: rgba(214, 197, 255, .45);
   --key-fn-hover: rgba(214, 197, 255, .65);
@@ -87,7 +87,7 @@
   --text-faint: #A3ACCB;
   --key-digit: rgba(255, 255, 255, .07);
   --key-digit-hover: rgba(255, 255, 255, .13);
-  --key-digit-pressed: rgba(255, 255, 255, .04);
+  --key-digit-pressed: rgba(255, 255, 255, .22);
   --key-digit-text: #F2F5FF;
   --key-fn: rgba(255, 255, 255, .11);
   --key-fn-hover: rgba(255, 255, 255, .17);

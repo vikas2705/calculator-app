@@ -118,7 +118,7 @@ npm test              # 201 tests (Vitest + Testing Library, in a simulated brow
 npm run coverage      # writes frontend/coverage/index.html
 ```
 
-Latest results (20 Nov 2026):
+Latest results:
 
 | | Tests | Coverage |
 |---|---|---|
@@ -128,12 +128,6 @@ Latest results (20 Nov 2026):
 
 Coverage reports (committed, so they can be opened without running anything): `backend/coverage/coverage.html` and
 `frontend/coverage/index.html`.
-
-What is deliberately not covered:
-
-- the backend's `main()`, which only wires up OS signals and the exit code (the server logic it calls is tested);
-- a safety-net branch that returns `500 INTERNAL_ERROR` if the maths package ever returns an error the API does not know.
-  Every current error has a mapping, so this branch cannot run today.
 
 What the tests cover, in short:
 
@@ -288,12 +282,13 @@ Press `?` in the app to see this list.
 | `Enter` or `=` | Equals |
 | `Backspace` | Delete, or step back |
 | `Esc` or `Delete` | Clear (AC). `Esc` first closes an open dialog or sheet. |
+| `↑` `↓` `←` `→` | Move between the on-screen keys (once a key has focus, e.g. after `Tab`) |
 | `h` | Show or hide history |
 | `t` | Switch light / dark theme |
 | `?` | Show the shortcuts |
 
 Keys pressed together with Ctrl, Cmd or Alt are ignored, so browser shortcuts still work. If you reach a button with
-`Tab`, `Enter` presses that button. Otherwise `Enter` means `=`.
+`Tab` or the arrow keys, `Enter` presses that button. Otherwise `Enter` means `=`.
 
 ---
 
@@ -302,7 +297,8 @@ Keys pressed together with Ctrl, Cmd or Alt are ignored, so browser shortcuts st
 - **Phone-style evaluation:** left to right, no operator precedence (`2 + 3 × 4 = 20`).
 - **The backend does all the maths;** the frontend only handles input and display (`12 + √9` → `sqrt(9)`, then `add(12, 3)`).
 - **Live preview** on every key press; outdated requests are cancelled and key presses are processed in order.
-- **Percentage is simple:** `x% = x ÷ 100`, so `50%` → `0.5`.
+- **Percentage is simple:** `x% = x ÷ 100`, so `50%` → `0.5`. A number typed straight after `%` multiplies it, as on
+  phone calculators: `32 % 2` reads `32% × 2` and gives `0.64`.
 - **15-digit input limit:** a double stores 15 digits exactly; results are rounded to 15 significant digits (`0.1 + 0.2` → `0.3`).
 - **The API never returns `Infinity` or `NaN`:** they become `OVERFLOW` / `UNDEFINED_RESULT` errors.
 - **Status codes:** `400` for a malformed request, `422` for impossible maths (e.g. divide by zero). Unknown fields and `null` operands are rejected.
@@ -334,7 +330,8 @@ Keys pressed together with Ctrl, Cmd or Alt are ignored, so browser shortcuts st
 │       ├── styles/          # design tokens (light + dark) and global styles
 │       └── test/            # test setup and a fake backend
 ├── design/                  # the design system the UI follows (tokens and component notes)
-├── docs/                    # README screenshots
-├── PLAN.md                  # requirements, decisions, specification, deviations
-└── PROMPTS.md               # the opening prompts (problem, decisions, plan, UI design)
+├── docs/
+│   ├── PLAN.md              # requirements, decisions, specification, deviations
+│   └── screenshot-*.png     # README screenshots
+└── PROMPTS.md               # the prompts used to plan, design, build and improve the project
 ```

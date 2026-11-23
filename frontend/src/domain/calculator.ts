@@ -9,7 +9,8 @@
  * module synchronous and fully testable without a network.
  *
  * √ and % apply to the current number. √ (and ±) pressed before a number is
- * typed wait for the next one: "12 +", √, 9 reads "12 + √9".
+ * typed wait for the next one: "12 +", √, 9 reads "12 + √9". A number typed
+ * right after % multiplies: "32%", 2 reads "32% × 2".
  *
  * Backspace can always step back: typed characters are deleted one at a
  * time, and every committed step (operator, √, %, =, an error) remembers the
@@ -112,12 +113,14 @@ export function transition(current: CalculatorState, input: Input): Step {
     case 'clear':
       return done(initialState)
     case 'digit':
-      if (state.mode === 'input' && state.entry?.kind === 'typed' && exceedsLimit(state.entry.text, input.digit)) {
-        return { kind: 'done', outcome: { state, rejected: true } }
-      }
-      return done(editEntry(state, (text) => appendDigit(text, input.digit), input.digit))
     case 'decimal':
-      return done(editEntry(state, appendDecimalPoint, '0.'))
+      // A number typed straight after a percentage multiplies it, as on phone
+      // calculators: "32%", 2 reads "32% × 2" (= 0.64). × is pressed for real,
+      // so it runs left to right like any operator and Backspace can undo it.
+      if (state.mode === 'input' && isPercentResult(state.entry)) {
+        return andThen(pressOperator(state, 'multiply'), (afterTimes) => transition(afterTimes, input))
+      }
+      return typeNumber(state, input)
     case 'backspace':
       return done(backspace(state))
     case 'negate':
@@ -149,6 +152,14 @@ export function previewText({ state }: Outcome): string {
 }
 
 /* ---------- Typing ---------- */
+
+function typeNumber(state: CalculatorState, input: Extract<Input, { type: 'digit' | 'decimal' }>): Step {
+  if (input.type === 'decimal') return done(editEntry(state, appendDecimalPoint, '0.'))
+  if (state.mode === 'input' && state.entry?.kind === 'typed' && exceedsLimit(state.entry.text, input.digit)) {
+    return { kind: 'done', outcome: { state, rejected: true } }
+  }
+  return done(editEntry(state, (text) => appendDigit(text, input.digit), input.digit))
+}
 
 /**
  * Applies a text edit to a typed entry (keeping a waiting √). A new operand
@@ -353,6 +364,16 @@ function done(state: CalculatorState): Step {
   return { kind: 'done', outcome: { state } }
 }
 
+/**
+ * Continues with `next` once `step` has finished (after any backend calls),
+ * from the state it ended in. If a calculation fails, its failure is the
+ * outcome and `next` does not run.
+ */
+function andThen(step: Step, next: (state: CalculatorState) => Step): Step {
+  if (step.kind === 'done') return next(step.outcome.state)
+  return { ...step, onResult: (value) => andThen(step.onResult(value), next) }
+}
+
 function withEntry(state: CalculatorState, entry: Entry): CalculatorState {
   return { ...state, entry }
 }
@@ -380,6 +401,14 @@ function isUntouchedStart(state: CalculatorState): boolean {
 /** The answer of √ or % (not a plain number such as a recalled value). */
 function isUnaryResult(entry: Entry | null): entry is Extract<Entry, { kind: 'computed' }> {
   return entry?.kind === 'computed' && !PLAIN_NUMBER.test(entry.label)
+}
+
+/**
+ * The answer of % ("32%", "(√9)%"). Labels come only from `unaryLabel` and
+ * `formatNumber`, and only a percentage's label ends in "%".
+ */
+function isPercentResult(entry: Entry | null): boolean {
+  return entry?.kind === 'computed' && entry.label.endsWith('%')
 }
 
 function computed(value: number): Entry {

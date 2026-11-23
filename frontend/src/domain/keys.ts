@@ -55,6 +55,58 @@ export const KEYPAD: KeyDef[] = [
   { id: 'decimal', label: '.', ariaLabel: 'Decimal point', role: 'digit', input: { type: 'decimal' }, keyboard: ['.', ','] },
 ]
 
+/**
+ * Where each key sits on the 4×6 grid (design/components/Keypad.md), by id.
+ * A key that spans two cells is listed in both. Arrow keys move focus on this grid.
+ */
+export const KEYPAD_GRID: readonly (readonly string[])[] = [
+  ['clear', 'backspace', 'percentage', 'divide'],
+  ['sqrt', 'power', 'negate', 'multiply'],
+  ['7', '8', '9', 'subtract'],
+  ['4', '5', '6', 'add'],
+  ['1', '2', '3', 'equals'],
+  ['0', '0', 'decimal', 'equals'],
+]
+
+export type Direction = 'up' | 'down' | 'left' | 'right'
+
+const ARROWS = new Map<string, Direction>([
+  ['ArrowUp', 'up'],
+  ['ArrowDown', 'down'],
+  ['ArrowLeft', 'left'],
+  ['ArrowRight', 'right'],
+])
+
+/** The direction an arrow key (`KeyboardEvent.key`) moves focus, or undefined for other keys. */
+export function arrowDirection(key: string): Direction | undefined {
+  return ARROWS.get(key)
+}
+
+const STEP: Record<Direction, readonly [row: number, column: number]> = {
+  up: [-1, 0],
+  down: [1, 0],
+  left: [0, -1],
+  right: [0, 1],
+}
+
+/**
+ * The id of the key one step from `id` in `direction`, or undefined at the
+ * edge of the grid (focus does not wrap around). A two-cell key is stepped
+ * over as one key and is left from its top-left cell, so up from 0 is 1 and
+ * left from = is 3.
+ */
+export function neighborKey(id: string, direction: Direction): string | undefined {
+  let row = KEYPAD_GRID.findIndex((cells) => cells.includes(id))
+  let column = KEYPAD_GRID[row]?.indexOf(id) ?? -1
+  if (column === -1) return undefined
+  const [rowStep, columnStep] = STEP[direction]
+  do {
+    row += rowStep
+    column += columnStep
+  } while (KEYPAD_GRID[row]?.[column] === id)
+  return KEYPAD_GRID[row]?.[column]
+}
+
 const byKeyboardKey = new Map(KEYPAD.flatMap((key) => key.keyboard.map((k) => [k, key] as const)))
 
 export function keyForKeyboard(key: string): KeyDef | undefined {
