@@ -1,0 +1,10 @@
+# Dependencies and build output (recreated by npm ci / npm run build)
+node_modules/
+dist/
+
+# Go build output
+backend/server
+
+# OS and editor files
+.DS_Store
+*.log

@@ -1,0 +1,56 @@
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  /* 24px above the calculator (the stage's margin) and 26px below it: the same
+     50px in total as before, so the height-fitted keys keep their size. */
+  padding: 0 var(--space-4) 26px;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 420px);
+  justify-content: center;
+  gap: var(--space-6);
+  margin-top: var(--space-6); /* space below the top bar */
+}
+
+/* Wide screens: the calculator sits centred alone. Opening history grows a
+   second column beside it, so the calculator glides left as the panel fades in. */
+@media (min-width: 760px) {
+  .stage {
+    --history-width: 320px;
+    --history-gap: var(--space-6);
+    grid-template-columns: 400px 0px;
+    column-gap: 0px;
+    align-items: start;
+    /* The closed panel keeps its width (so it can fade in whole) and would
+       stick out past the window's right edge; clip it sideways only. */
+    overflow-x: clip;
+    transition:
+      grid-template-columns 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+      column-gap 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .stage.withHistory {
+    grid-template-columns: 400px var(--history-width);
+    column-gap: var(--history-gap);
+  }
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    --history-width: 360px;
+    --history-gap: var(--space-8);
+    grid-template-columns: 420px 0px;
+  }
+
+  .stage.withHistory {
+    grid-template-columns: 420px var(--history-width);
+  }
+}
+
+@media (max-width: 400px) {
+  .page {
+    padding: 0 var(--space-3) 40px;
+  }
+}

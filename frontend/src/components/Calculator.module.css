@@ -1,0 +1,19 @@
+.card {
+  position: relative;
+  border-radius: var(--radius-card);
+  padding: clamp(14px, 4vw, 22px);
+}
+
+/* Sits 8px inside the display's corner, so its outline never meets the edge
+   of the highlighted result area. */
+.historyButton {
+  position: absolute;
+  top: calc(clamp(14px, 4vw, 22px) + 8px);
+  left: calc(clamp(14px, 4vw, 22px) + 8px);
+  z-index: 1;
+}
+
+/* On the highlighted result, a second outline inside it looks busy: drop it. */
+.historyButton.onResult {
+  border-color: transparent;
+}

@@ -1,0 +1,8 @@
+# Send only the source the image needs.
+*
+!frontend
+!backend
+frontend/node_modules
+frontend/dist
+frontend/coverage
+backend/coverage

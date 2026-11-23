@@ -1,0 +1,110 @@
+/* Design tokens: Calculator – Pastel Morning & Aurora Night.
+   Generated from design/tokens.json; token names are kept exactly. Components use these, never raw hex. */
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --key-height-min: 58px;
+  --key-height-max: 72px;
+  --touch-target: 44px;
+  --radius-card: 28px;
+  --radius-panel: 24px;
+  --radius-bar: 22px;
+  --radius-key: 20px;
+  --radius-control: 14px;
+  --radius-segment: 12px;
+  --radius-kbd: 9px;
+  --glass-blur: blur(26px) saturate(150%);
+  --blob-opacity-light: 0.75;
+  --blob-opacity-dark: 0.6;
+  --press-scale: scale(0.94);
+  --font-sans: "Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Light · Pastel Morning */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --bg-base: #F5E6F0;
+  --bg-gradient-1: #FFE4D6;
+  --bg-gradient-2: #EEDFFB;
+  --bg-gradient-3: #D8ECFF;
+  --blob-1: #FFC6AE;
+  --blob-2: #D6C5FF;
+  --blob-3: #B9DCFF;
+  --glass: rgba(255, 255, 255, .56);
+  --glass-strong: rgba(255, 255, 255, .72);
+  --glass-border: rgba(255, 255, 255, .88);
+  --glass-highlight: rgba(255, 255, 255, .95);
+  --text: #2C2440;
+  --text-muted: #5A5170;
+  --text-faint: #665D7C;
+  --key-digit: rgba(255, 255, 255, .72);
+  --key-digit-hover: rgba(255, 255, 255, .95);
+  --key-digit-pressed: rgba(255, 255, 255, .5);
+  --key-digit-text: #2C2440;
+  --key-fn: rgba(214, 197, 255, .45);
+  --key-fn-hover: rgba(214, 197, 255, .65);
+  --key-fn-text: #3E2F70;
+  --key-op: rgba(185, 220, 255, .62);
+  --key-op-hover: rgba(185, 220, 255, .88);
+  --key-op-text: #1F4C80;
+  --key-eq: #FF7A66;
+  --key-eq-hover: #FF8E7C;
+  --key-eq-text: #3A0D05;
+  --focus-ring: #6F43D1;
+  --result-text: #B03A24;
+  --result-surface: rgba(255, 122, 102, .12);
+  --scrim: rgba(60, 40, 80, .28);
+  --shadow-glass: 0 30px 60px -28px rgba(140, 90, 140, .38), 0 8px 18px -10px rgba(140, 90, 140, .2);
+  --shadow-eq: 0 12px 28px -8px rgba(255, 122, 102, .6), 0 0 0 1px rgba(255, 255, 255, .5);
+  --shadow-result-text: none;
+  --blob-opacity: var(--blob-opacity-light);
+  --bg-gradient: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+}
+
+/* Dark · Aurora Night */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-base: #070B1A;
+  --bg-gradient-1: #121C42;
+  --bg-gradient-2: #080D20;
+  --bg-gradient-3: #04060F;
+  --blob-1: #14B8A6;
+  --blob-2: #7C3AED;
+  --blob-3: #DB2777;
+  --glass: rgba(14, 20, 46, .52);
+  --glass-strong: rgba(14, 20, 46, .66);
+  --glass-border: rgba(255, 255, 255, .14);
+  --glass-highlight: rgba(255, 255, 255, .10);
+  --text: #F2F5FF;
+  --text-muted: #B9C1DC;
+  --text-faint: #A3ACCB;
+  --key-digit: rgba(255, 255, 255, .07);
+  --key-digit-hover: rgba(255, 255, 255, .13);
+  --key-digit-pressed: rgba(255, 255, 255, .04);
+  --key-digit-text: #F2F5FF;
+  --key-fn: rgba(255, 255, 255, .11);
+  --key-fn-hover: rgba(255, 255, 255, .17);
+  --key-fn-text: #E6EAF8;
+  --key-op: rgba(167, 139, 250, .20);
+  --key-op-hover: rgba(167, 139, 250, .31);
+  --key-op-text: #DED4FF;
+  --key-eq: #2DD4BF;
+  --key-eq-hover: #5EEAD4;
+  --key-eq-text: #03231F;
+  --focus-ring: #5EEAD4;
+  --result-text: #7FF3E1;
+  --result-surface: rgba(45, 212, 191, .10);
+  --scrim: rgba(2, 4, 12, .55);
+  --shadow-glass: 0 30px 60px -22px rgba(0, 0, 0, .65), 0 10px 24px -12px rgba(0, 0, 0, .5);
+  --shadow-eq: 0 0 0 1px rgba(94, 234, 212, .55), 0 0 26px rgba(45, 212, 191, .55), 0 0 64px rgba(45, 212, 191, .28);
+  --shadow-result-text: 0 0 28px rgba(45, 212, 191, .45);
+  --blob-opacity: var(--blob-opacity-dark);
+  --bg-gradient: radial-gradient(120% 90% at 50% 0%, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 55%, var(--bg-gradient-3) 100%);
+}

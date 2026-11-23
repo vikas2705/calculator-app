@@ -1,0 +1,50 @@
+.iconButton {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--glass-border);
+  background: var(--key-digit);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.12s;
+}
+
+.iconButton:hover {
+  background: var(--key-digit-hover);
+}
+
+.iconButton:active {
+  transform: var(--press-scale);
+}
+
+.iconButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* control-label */
+.textButton {
+  min-height: var(--touch-target);
+  padding: 0 14px;
+  border-radius: var(--radius-segment);
+  border: 1px solid var(--glass-border);
+  background: var(--key-digit);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.textButton:hover {
+  background: var(--key-digit-hover);
+}
+
+.textButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}

@@ -1,0 +1,7 @@
+services:
+  calculator:
+    build: .
+    image: calculator:local
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

@@ -1,0 +1,54 @@
+/* design/design-system.md → Background */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-gradient);
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: var(--blob-opacity);
+  will-change: transform;
+}
+
+.blob1 {
+  width: 70vmax;
+  height: 70vmax;
+  top: -28vmax;
+  left: -22vmax;
+  background: radial-gradient(circle, var(--blob-1) 0%, transparent 62%);
+  animation: drift1 26s ease-in-out infinite alternate;
+}
+
+.blob2 {
+  width: 75vmax;
+  height: 75vmax;
+  bottom: -32vmax;
+  right: -26vmax;
+  background: radial-gradient(circle, var(--blob-2) 0%, transparent 62%);
+  animation: drift2 32s ease-in-out infinite alternate;
+}
+
+.blob3 {
+  width: 55vmax;
+  height: 55vmax;
+  top: 25%;
+  left: 35%;
+  background: radial-gradient(circle, var(--blob-3) 0%, transparent 62%);
+  animation: drift3 38s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 {
+  to { transform: translate(14vmax, 10vmax) scale(1.12); }
+}
+
+@keyframes drift2 {
+  to { transform: translate(-12vmax, -9vmax) scale(1.08); }
+}
+
+@keyframes drift3 {
+  to { transform: translate(-16vmax, 6vmax) scale(0.9); }
+}

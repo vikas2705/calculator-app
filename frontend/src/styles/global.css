@@ -1,0 +1,108 @@
+/* Base styles and the shared glass recipe (design/components/GlassSurface.md). */
+
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* Keeps the top bar's margin inside the body; otherwise it is added on top of
+     min-height and every page scrolls by 10px. */
+  display: flow-root;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--bg-base);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Frosts the notch area on phones so content scrolling under it stays legible. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+p,
+ol {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-glass);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+}
+
+/* Dims the page behind the history sheet; fades in and out with the sheet's slide. */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--scrim);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+.scrim.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

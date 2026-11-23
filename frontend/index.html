@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#F5E6F0" />
+    <meta name="description" content="A frosted-glass calculator." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Calculator</title>
+    <script>
+      // Set the theme before first paint so dark-mode users never see a light flash.
+      // Must match useTheme.ts (storage key and values).
+      try {
+        var saved = localStorage.getItem('calculator.theme')
+        var theme = saved === 'light' || saved === 'dark' ? saved
+          : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
